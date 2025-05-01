@@ -110,55 +110,61 @@ given()
 
 ---
 
-## Testes Realizados
+## Cenários de Teste
 
-### Problema 1: Consultar Produto por Nome
-
-- Teste GET em `/products?name=Macbook`
-- Valida se `id`, `name`, `price` e `imgUrl` retornam corretamente.
-- Esperado: status 200.
-
----
-
-### Problema 2: Inserir Produto (POST)
-
-**Cenários:**
-- Insere com sucesso quando logado como admin.
-- Retorna 422 com mensagens customizadas para:
-  - Nome inválido
-  - Descrição inválida
-  - Preço negativo
-  - Preço zero
-  - Sem categoria
-- Retorna 403 quando logado como cliente.
-- Retorna 401 quando não autenticado.
+### Teste 1: Consultar Produto por ID
+- Endpoint: `GET /products/2`
+- Verifica:
+  - `id`, `name`, `description`, `price`, `imgUrl`
+  - `categories.id`, `categories.name`
 
 ---
 
-### Problema 3: Deletar Produto (DELETE)
-
-**Cenários:**
-- Deleta com sucesso (admin).
-- Retorna 404 para produto inexistente.
-- Retorna 400 para produto com dependências.
-- Retorna 403 (cliente).
-- Retorna 401 (sem autenticação).
+### Teste 2: Consultar Produtos (Paginado)
+- Endpoint: `GET /products`
+- Cenários:
+  - Listagem sem filtro (espera "Macbook Pro" e "PC Gamer Tera")
+  - Filtro por nome
+  - Filtro por preço > 2000.0 com uso de `.findAll`
 
 ---
 
-### Problema 4: Consultar Pedido por ID (GET)
-
-**Cenários:**
-- Retorna pedido (admin).
-- Retorna pedido do próprio usuário (cliente).
-- Retorna 403 se pedido não pertence ao cliente.
-- Retorna 404 para pedido inexistente.
-- Retorna 401 (não autenticado).
+### Teste 3: Inserir Produto
+- Endpoint: `POST /products`
+- Autenticação obrigatória (admin)
+- Cenários:
+  - Produto válido
+  - Campos inválidos:
+    - `name` inválido
+    - `description` inválida
+    - `price` negativo
+    - `price` igual a zero
+    - Sem categorias
+  - Cliente (403)
+  - Sem login (401)
 
 ---
 
-## Conclusão
+### Teste 4: Deletar Produto
+- Endpoint: `DELETE /products/{id}`
+- Autenticação obrigatória (admin)
+- Cenários:
+  - Produto existente
+  - Produto inexistente (404)
+  - Produto com dependências (400)
+  - Cliente (403)
+  - Sem login (401)
 
-Este projeto apresenta um exemplo simples e funcional de como utilizar o Rest Assured para testes de endpoints REST em uma API Spring Boot. A abordagem cobre cenários comuns como autenticação, filtros, validações de campos e tratamento de erros.
+---
 
-Sinta-se à vontade para clonar o repositório e rodar os testes!
+### Teste 5: Consultar Pedido por ID
+- Endpoint: `GET /orders/{id}`
+- Autenticação obrigatória
+- Cenários:
+  - Admin acessa qualquer pedido
+  - Cliente acessa seu próprio pedido
+  - Cliente acessa pedido de outro (403)
+  - Pedido inexistente (404)
+  - Sem login (401)
+
+---
